@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mantle Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE work: reference docs a server owner keeps open while setting up
+   IDEA geological strata: Mantle is the layer between the server's core (LuckPerms) and the crust players see
+   PICTURE a cross-section of layers on the home page: Paper, LuckPerms, Mantle, what players see
+   COLOUR Mantle's own purple #8e44ad leading, deep violet ground at night, pale lilac zones, magenta accent
+   TYPE Space Grotesk headings + Inter text + JetBrains Mono for commands
+   LAYOUT sticky sidebar of pages on the left with search; content column right; phone: top bar with menu, content below */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#110a1a);--ink:light-dark(#1b1226,#efe7f7);--soft:light-dark(#5d4f6e,#b9abc9);--zone:light-dark(#f4ecfa,#1d1229);--rule:light-dark(#e2d5ee,#33244a);--p:light-dark(#7b2fa0,#c98bf0);--pd:#8e44ad;--acc:light-dark(#c2187a,#ff6fbd);--code:light-dark(#f6f1fa,#1a1124)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+html{scroll-padding-top:80px}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
+a{color:var(--p)}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;letter-spacing:-.02em;line-height:1.1;text-wrap:balance}
+h1{font-size:clamp(32px,4.6vw,48px);margin:0 0 14px}
+h2{font-size:26px;margin:40px 0 10px;padding-top:6px}
+h3{font-size:18px;margin:26px 0 6px}
+p{margin:0 0 14px;max-width:70ch}
+code{font:14px/1.5 "JetBrains Mono",ui-monospace,monospace;background:var(--code);border:1px solid var(--rule);border-radius:5px;padding:1px 5px;overflow-wrap:anywhere}
+pre{position:relative;background:var(--code);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:0;padding:0;white-space:pre;overflow-wrap:normal}
+.cp{position:absolute;top:8px;right:8px;font:500 13px Inter,sans-serif;background:var(--bg);color:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:5px 10px;cursor:pointer;min-height:32px}
+.cp:focus-visible,button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;background:var(--pd);color:#fff;padding:12px max(3vw,16px);min-height:60px}
+.brand{display:flex;align-items:center;gap:10px;font:700 21px "Space Grotesk",sans-serif;color:#fff;text-decoration:none;white-space:nowrap}
+.brand svg{flex:none}
+.brand span{opacity:.75;font-weight:500;font-size:15px}
+.menu{display:none;margin-left:auto;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:8px;font:600 15px Inter,sans-serif;padding:0 14px;min-height:44px;cursor:pointer}
+.ver{margin-left:auto;font-size:14px;opacity:.85;white-space:nowrap}
+.wrap{display:grid;grid-template-columns:270px minmax(0,1fr);max-width:1240px;margin:0 auto}
+nav.side{position:sticky;top:60px;align-self:start;height:calc(100vh - 60px);overflow-y:auto;padding:22px 18px 40px max(2vw,16px);border-right:1px solid var(--rule)}
+.search{width:100%;font:16px Inter,sans-serif;padding:10px 12px;border:1px solid var(--rule);border-radius:8px;background:var(--bg);color:var(--ink);margin-bottom:16px;min-height:44px}
+.grp{font:600 13px Inter,sans-serif;color:var(--soft);margin:18px 0 4px 10px}
+nav.side a{display:flex;align-items:center;min-height:38px;padding:4px 10px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:15px}
+nav.side a:hover{background:var(--zone)}
+nav.side a.on{background:var(--zone);color:var(--p);font-weight:600;box-shadow:inset 3px 0 0 var(--p)}
+.none{color:var(--soft);font-size:14px;padding:6px 10px;display:none}
+main{padding:30px max(4vw,16px) 80px;max-width:900px}
+.lead{font-size:18px;color:var(--soft);max-width:62ch}
+.tbl{overflow-x:auto;margin:0 0 18px;border:1px solid var(--rule);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{background:var(--zone);font-weight:600}
+tr:last-child td{border-bottom:0}
+td:first-child code{white-space:nowrap}
+.note{background:var(--zone);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;padding:12px 16px;margin:0 0 16px;max-width:70ch}
+.note p:last-child{margin:0}
+.strata{display:grid;gap:0;margin:22px 0 28px;border-radius:14px;overflow:hidden;border:1px solid var(--rule)}
+.layer{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:16px;align-items:center;padding:16px 20px}
+.layer b{font:600 17px "Space Grotesk",sans-serif}
+.layer span{font-size:15px}
+.l1{background:light-dark(#fbf6ff,#22163a)}
+.l2{background:light-dark(#e9d3f6,#3a1f57);}
+.l3{background:var(--pd);color:#fff;padding-block:26px}
+.l3 b{font-size:22px}
+.l4{background:light-dark(#3d1a55,#0b0612);color:#f1e6fa}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(15em,1fr));gap:12px;margin:0 0 20px}
+.card{display:block;border:1px solid var(--rule);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--p)}
+.card b{display:block;font:600 16px "Space Grotesk",sans-serif;color:var(--p);margin-bottom:2px}
+.card span{font-size:14px;color:var(--soft)}
+ol.steps{padding-left:22px;max-width:70ch}
+ol.steps li{margin-bottom:10px}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:48px;padding-top:18px;border-top:1px solid var(--rule)}
+.pager a{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1px solid var(--rule);border-radius:8px;text-decoration:none;font-weight:500}
+footer{color:var(--soft);font-size:14px;margin-top:28px}
+section.pg{display:none}
+section.pg.on{display:block;animation:in .25s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){section.pg.on{animation:none}}
+@media(max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}.menu{display:inline-flex;align-items:center}.ver{display:none}nav.side{display:none;position:fixed;inset:60px 0 0 0;height:auto;background:var(--bg);z-index:4;border:0;padding:18px 16px 40px}body.open nav.side{display:block}}
+@media(max-width:600px){table{font-size:13px}th,td{padding:7px 8px}.layer{grid-template-columns:minmax(0,1fr);gap:2px}.stack thead{display:none}.stack tr{display:grid;padding-block:8px;border-bottom:1px solid var(--rule)}.stack td{border:0;padding:3px 10px}.stack td::before{content:attr(data-l);display:block;font-size:12px;color:var(--soft)}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#home"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="2" width="24" height="6" rx="2" fill="#f3d9ff"/><rect x="1" y="10" width="24" height="6" rx="2" fill="#ffffff"/><rect x="1" y="18" width="24" height="6" rx="2" fill="#d070ff"/></svg>Mantle <span>Wiki</span></a>
+  <span class="ver">Version 3.1.0 · by Deputy Dev</span>
+  <button class="menu" id="menu" aria-expanded="false" aria-controls="side">Pages</button>
+</header>
+<div class="wrap">
+<nav class="side" id="side" aria-label="Wiki pages">
+  <label for="q" class="grp" style="margin-left:0;display:block">Search the wiki</label>
+  <input class="search" id="q" type="search" placeholder="Try: vouchers, prefix, webhook" autocomplete="off">
+  <div id="links"></div>
+  <p class="none" id="none">No page matches that.</p>
+</nav>
+<main id="main">
+
+<section class="pg" id="p-home" data-t="Welcome" data-g="Start">
+<h1>Mantle: ranks on top of LuckPerms</h1>
+<p class="lead">LuckPerms keeps your ranks and permissions. Mantle adds everything around selling and handing them out: store commands, grants with history, vouchers, sales, trials, a rank menu, and clean chat, tab and nametags.</p>
+<div class="strata" aria-label="Where Mantle sits">
+  <div class="layer l1"><b>What players see</b><span>Chat prefixes, tab names, nametags, /ranks, /color and /tags menus</span></div>
+  <div class="layer l3"><b>Mantle</b><span>Store commands, grants and history, vouchers, sales, trials, rank-ups, Discord log, placeholders</span></div>
+  <div class="layer l2"><b>LuckPerms</b><span>Who has which rank, permissions, and Mantle's player data, synced across servers</span></div>
+  <div class="layer l4"><b>Paper server</b><span>1.20.6 to 1.21.x and 26.x, Java 21 or newer</span></div>
+</div>
+<h2>Where to start</h2>
+<div class="cards">
+  <a class="card" href="#install"><b>Install</b><span>Three steps from download to a working rank menu</span></a>
+  <a class="card" href="#import"><b>Already have ranks?</b><span>Bring your LuckPerms groups in with one command</span></a>
+  <a class="card" href="#store"><b>Connect your store</b><span>The command to paste into Tebex or CraftingStore</span></a>
+  <a class="card" href="#commands"><b>Commands</b><span>Every command and who can use it</span></a>
+  <a class="card" href="#config"><b>Config files</b><span>What each file controls</span></a>
+  <a class="card" href="#help"><b>Problems?</b><span>Common fixes and how to get support</span></a>
+</div>
+</section>
+
+<section class="pg" id="p-install" data-t="Install" data-g="Start" data-k="requirements java paper purpur luckperms vault setup">
+<h1>Install</h1>
+<h2>Requirements</h2>
+<div class="tbl"><table class="stack"><thead><tr><th>What</th><th>Needed</th></tr></thead><tbody>
+<tr><td>Server</td><td>Paper, or a fork such as Purpur, 1.20.6 to 1.21.x, and 26.x. Spigot and Bukkit are not supported.</td></tr>
+<tr><td>Java</td><td>21 or newer. 26.x servers need Java 25.</td></tr>
+<tr><td>Required plugin</td><td><a href="https://luckperms.net/download">LuckPerms</a> 5.4 or newer</td></tr>
+<tr><td>Optional</td><td><a href="https://www.spigotmc.org/resources/placeholderapi.6245/">PlaceholderAPI</a> for placeholders. <a href="https://www.spigotmc.org/resources/vault.34315/">Vault</a> plus an economy plugin, only for paid rank-ups.</td></tr>
+</tbody></table></div>
+<h2>Three steps</h2>
+<ol class="steps">
+<li><b>Install.</b> Put the Mantle jar in <code>plugins/</code> next to LuckPerms and restart the server.</li>
+<li><b>Set up your ranks</b> in <code>plugins/Mantle/ranks.yml</code>, or keep the examples, then run <code>/mantle reload</code>. If you already have LuckPerms groups, see <a href="#import">Import existing ranks</a> first.</li>
+<li><b>Check and apply.</b> Run <code>/mantle setup</code>. If a group is missing in LuckPerms, <code>/mantle setup apply</code> creates it. The check also prints the store command to paste into your store.</li>
+</ol>
+<div class="note"><p>The very first start needs to reach <code>app.lukittu.com</code> to check your license. See <a href="#license">License</a>.</p></div>
+</section>
+
+<section class="pg" id="p-import" data-t="Import existing ranks" data-g="Start" data-k="import groups luckperms setup apply">
+<h1>Import existing ranks</h1>
+<p>Run this once:</p>
+<pre><code>/mantle setup import</code></pre>
+<p>Every LuckPerms group that isn't in ranks.yml yet is added with its prefix, weight and name colour, so it shows up in <code>/ranks</code> and the grant menu straight away. Groups that look like staff ranks are added as hidden.</p>
+<p>Then add icons, perks and prices in ranks.yml and run <code>/mantle reload</code>.</p>
+<h2>Prefixes</h2>
+<p>A rank's <code>prefix</code> in ranks.yml is used for that rank. Groups not in ranks.yml, or with no prefix there, use their LuckPerms prefix. <code>/mantle setup apply</code> copies ranks.yml prefixes into LuckPerms so other plugins, like TAB or scoreboards, show the same thing.</p>
+</section>
+
+<section class="pg" id="p-ranks" data-t="Ranks (ranks.yml)" data-g="Features" data-k="ranks.yml prefix suffix weight icon perks hidden price rewards">
+<h1>Ranks</h1>
+<p>Each key in ranks.yml is a LuckPerms group. LuckPerms keeps who has which rank; ranks.yml adds the looks, perks, prices and rank-up rules. Only <code>display</code> is required.</p>
+<div class="tbl"><table class="stack"><thead><tr><th>Setting</th><th>What it does</th></tr></thead><tbody>
+<tr><td><code>display</code></td><td>Name shown in menus and messages</td></tr>
+<tr><td><code>prefix</code> / <code>suffix</code></td><td>Shown around the name in chat, tab and nametags</td></tr>
+<tr><td><code>color</code></td><td>Colour of the player's name in chat and tab</td></tr>
+<tr><td><code>weight</code></td><td>Higher sorts first in tab and wins as the main rank</td></tr>
+<tr><td><code>icon</code></td><td>Menu item, any <a href="https://jd.papermc.io/paper/org/bukkit/Material.html">Material</a></td></tr>
+<tr><td><code>description</code></td><td>Lines under the name in menus</td></tr>
+<tr><td><code>perks</code></td><td>Listed on the rank's page in /ranks</td></tr>
+<tr><td><code>hidden</code></td><td><code>true</code> leaves it out of /ranks, for staff ranks</td></tr>
+<tr><td><code>store</code></td><td><code>price</code> shows on the Buy button; <code>link</code> overrides the store link for this rank</td></tr>
+<tr><td><code>rankup</code></td><td>Only for ranks on the rank-up path: <code>cost</code>, <code>playtime</code>, <code>auto</code></td></tr>
+<tr><td><code>rewards</code></td><td>Console commands run when the rank is gained. Placeholders: <code>&lt;player&gt;</code> <code>&lt;rank&gt;</code> <code>&lt;duration&gt;</code></td></tr>
+</tbody></table></div>
+<h2>Example</h2>
+<pre><code>ranks:
+  vip:
+    display: "&lt;gold&gt;&lt;bold&gt;VIP"
+    prefix: "&lt;gold&gt;&lt;bold&gt;VIP&lt;/bold&gt; "
+    color: "&lt;yellow&gt;"
+    weight: 50
+    icon: GOLD_INGOT
+    description: ["Support the server."]
+    perks: ["5 homes", "/fly in the lobby"]
+    store: { price: "$9.99" }
+    rewards: ["say &lt;player&gt; is now VIP!"]</code></pre>
+<div class="note"><p>Reward commands run straight away, so commands that need the player online (items, kits) only work if they are.</p></div>
+</section>
+
+<section class="pg" id="p-store" data-t="Store ranks" data-g="Features" data-k="tebex craftingstore give flags gift upgrade offline">
+<h1>Store ranks</h1>
+<p>Add a command to your Tebex, CraftingStore or other store package, and set it to run when the player is offline too:</p>
+<pre><code>mantle give {username} vip 30d -a</code></pre>
+<div class="tbl"><table class="stack"><thead><tr><th>Flag</th><th>What it does</th></tr></thead><tbody>
+<tr><td><code>-a</code></td><td>Announce to the whole network</td></tr>
+<tr><td><code>-s</code></td><td>Don't message the player</td></tr>
+<tr><td><code>--from &lt;buyer&gt;</code></td><td>A gift: "buyer gifted VIP to player!"</td></tr>
+<tr><td><code>--no-rewards</code></td><td>Skip the rank's reward commands</td></tr>
+<tr><td><code>--server &lt;name&gt;</code></td><td>Give the rank on one server only</td></tr>
+<tr><td><code>--reason &lt;text&gt;</code></td><td>Reason in grant history (default "Store purchase"). Must be the last flag.</td></tr>
+</tbody></table></div>
+<p>It works for players who are offline or have never joined, and every give shows up in <code>/grants</code>.</p>
+<h2>Times</h2>
+<p>Use <code>30d</code>, <code>12h</code>, <code>1w2d</code>, <code>1mo</code> or <code>perm</code>. Timed ranks stack: 30d on top of 10d left gives 40d.</p>
+<h2>Upgrades</h2>
+<pre><code>mantle upgrade {username} vip mvp -a</code></pre>
+<p>Swaps VIP for MVP and keeps the time that was left. A permanent VIP becomes a permanent MVP. Add a time like <code>30d</code> to set the length yourself.</p>
+</section>
+
+<section class="pg" id="p-grants" data-t="Grants and history" data-g="Features" data-k="grant grants history remove reason permission server staff">
+<h1>Grants and history</h1>
+<p><code>/grant &lt;player&gt;</code> opens a menu: pick the rank, length and reason, then confirm. You can also type it all out, from in-game or the console:</p>
+<pre><code>/grant Steve vip 30d Event winner</code></pre>
+<h2>History</h2>
+<p>Every rank Mantle gives is recorded: store purchases, /grant, vouchers, trials and rank-ups. <code>/grants &lt;player&gt;</code> lists them with who gave them, when, why and when they end.</p>
+<p>Removing an active grant asks for a reason and takes only that grant's time off the player's rank, or removes the rank if nothing else gives it. History is stored in LuckPerms, so it follows players across servers. Ranks given with plain LuckPerms commands aren't in it.</p>
+<h2>Who can grant what</h2>
+<p><code>mantle.grant.any</code> grants every rank. Without it, give <code>mantle.grant.rank.&lt;rank&gt;</code> per rank, for example <code>mantle.grant.rank.vip</code> for helpers.</p>
+<h2>Single permissions and one-server grants</h2>
+<pre><code>/grant Steve perm:essentials.fly 7d Event prize
+/grant Steve vip 30d --server survival</code></pre>
+<p>Single permissions need <code>mantle.grant.permission</code>. List your server names in <code>grants.servers</code> in config.yml to get a server switch in the grant menu. <code>grants.prompt-timeout</code> sets how long the menu waits for staff to type a reason.</p>
+</section>
+
+<section class="pg" id="p-extras" data-t="Vouchers, sales and trials" data-g="Features" data-k="voucher sale boss bar trial ranktrial discount">
+<h1>Vouchers, sales and trials</h1>
+<h2>Vouchers</h2>
+<pre><code>/mantle voucher vip 30d 5 Steve</code></pre>
+<p>Gives redeemable rank vouchers (rank, time, amount up to 64, player). Players right-click to redeem. If redeeming fails, the voucher is handed back. Vouchers for offline players are kept until they join. Item, glow and announcements are set under <code>vouchers</code> in config.yml.</p>
+<h2>Sales</h2>
+<pre><code>/mantle sale 20 2d
+/mantle sale stop</code></pre>
+<p>Runs a store-wide sale (up to 95% off) with a countdown boss bar. Change or turn off the bar under <code>sales.boss-bar</code>.</p>
+<h2>Trials</h2>
+<p><code>/ranktrial</code> gives each player one free trial. Set the rank, length and minimum playtime under <code>trial</code> in config.yml.</p>
+</section>
+
+<section class="pg" id="p-rankup" data-t="Rank-up and prestige" data-g="Features" data-k="rankup prestige prison skyblock playtime cost vault">
+<h1>Rank-up and prestige</h1>
+<p>For prison, skyblock and similar servers. Turn it on in config.yml:</p>
+<pre><code>rankup:
+  enabled: true
+  path: [default, member, elite]</code></pre>
+<p>Then give each rank on the path a <code>rankup</code> rule in ranks.yml: <code>cost</code> (money, needs Vault), <code>playtime</code> (like <code>2h</code>), and <code>auto: true</code> to give it automatically once playtime is reached.</p>
+<p><code>prestige.enabled: true</code> adds <code>/prestige</code> at the top of the path, with a max level, cost, cost scaling, a prestige tag format and rewards.</p>
+</section>
+
+<section class="pg" id="p-looks" data-t="Chat, tab and nametags" data-g="Features" data-k="chat format hover tab header footer nametags join quit messages theme">
+<h1>Chat, tab and nametags</h1>
+<h2>Chat</h2>
+<pre><code>chat:
+  format: "&lt;chat-tag&gt;&lt;prestige&gt;&lt;prefix&gt;&lt;player&gt;&lt;suffix&gt; &lt;dark_gray&gt;»&lt;/dark_gray&gt; &lt;gray&gt;&lt;message&gt;"</code></pre>
+<p>Hovering a name shows a card with rank, prestige and time left (<code>chat.hover</code>). Turn off <code>chat.enabled</code> if another chat plugin should format chat.</p>
+<h2>Tab</h2>
+<p><code>tab</code> sets the name format, header and footer, and sorting by rank weight.</p>
+<h2>Nametags</h2>
+<p><code>nametags</code> puts the rank prefix, suffix and colour above heads.</p>
+<h2>Join and quit messages</h2>
+<p>Set per rank under <code>join-messages</code>, with <code>default</code> as the fallback. <code>""</code> hides a rank's message; <code>mantle.join.silent</code> hides one player's messages.</p>
+<div class="note"><p>Tab sorting and nametags use scoreboard teams on the main scoreboard. If another plugin gives players their own scoreboard, turn off <code>tab.sort-by-weight</code> and <code>nametags.enabled</code> and let that plugin use Mantle's <a href="#placeholders">placeholders</a>.</p></div>
+</section>
+
+<section class="pg" id="p-cosmetics" data-t="Cosmetics" data-g="Features" data-k="color chatcolor tags cosmetics.yml">
+<h1>Cosmetics</h1>
+<p><code>/color</code>, <code>/chatcolor</code> and <code>/tags</code> open menus set in cosmetics.yml. Each colour or tag unlocks with its rank (or higher), its own permission, or <code>mantle.cosmetics.all</code>:</p>
+<pre><code>mantle.namecolor.&lt;id&gt;
+mantle.chatcolor.&lt;id&gt;
+mantle.tag.&lt;id&gt;</code></pre>
+<p>Tags show where <code>&lt;chat-tag&gt;</code> is in <code>chat.format</code>.</p>
+</section>
+
+<section class="pg" id="p-discord" data-t="Discord log" data-g="Features" data-k="discord webhook staff public events">
+<h1>Discord log</h1>
+<p>Set <code>discord.enabled: true</code> and paste a webhook URL into <code>staff-webhook</code>, and optionally <code>public-webhook</code>. Choose where each event goes in <code>discord.events</code>: purchases, grants, removals and more.</p>
+<div class="note"><p>Keep webhook URLs private. Anyone with one can post in that channel.</p></div>
+</section>
+
+<section class="pg" id="p-placeholders" data-t="PlaceholderAPI" data-g="Features" data-k="placeholders papi scoreboard">
+<h1>PlaceholderAPI</h1>
+<p>With PlaceholderAPI installed, Mantle registers <code>%mantle_&lt;name&gt;%</code>. They read from Mantle's cache, so scoreboards and tab plugins can refresh them every tick at no cost.</p>
+<div class="tbl"><table><thead><tr><th>Coloured</th><th>Plain</th></tr></thead><tbody>
+<tr><td><code>prefix</code> <code>suffix</code> <code>rank</code> <code>name</code> <code>prestige</code> <code>tag</code></td><td><code>group</code> <code>weight</code> <code>prestige_level</code> <code>color</code> <code>prefix_raw</code> <code>suffix_raw</code> <code>time_left</code> <code>tag_raw</code> <code>chat_color</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section class="pg" id="p-network" data-t="Networks" data-g="Features" data-k="network bungee velocity redis sql sync">
+<h1>Networks</h1>
+<p>Rank changes and Mantle's player data already sync through LuckPerms. To send announcements to every server as well, set <code>messaging-service</code> in each server's LuckPerms config, for example <code>sql</code> or <code>redis</code>. <code>/mantle setup</code> shows whether it's working.</p>
+</section>
+
+<section class="pg" id="p-commands" data-t="Commands" data-g="Reference" data-k="commands give take info list reload">
+<h1>Commands</h1>
+<div class="tbl"><table class="stack"><thead><tr><th>Command</th><th>Permission</th><th>What it does</th></tr></thead><tbody id="cmds"></tbody></table></div>
+<p>Rename commands with aliases in Bukkit's <code>commands.yml</code>.</p>
+</section>
+
+<section class="pg" id="p-permissions" data-t="Permissions" data-g="Reference" data-k="permissions nodes">
+<h1>Permissions</h1>
+<div class="tbl"><table class="stack"><thead><tr><th>Permission</th><th>What it allows</th></tr></thead><tbody id="perms"></tbody></table></div>
+</section>
+
+<section class="pg" id="p-config" data-t="Config files" data-g="Reference" data-k="config.yml messages.yml menus.yml theme colours minimessage">
+<h1>Config files</h1>
+<div class="tbl"><table class="stack"><thead><tr><th>File</th><th>What's in it</th></tr></thead><tbody>
+<tr><td><code>config.yml</code></td><td>Theme, store link, chat, tab, nametags, join messages, network, reminders, trials, grants, sales, vouchers, Discord, rank-up, prestige</td></tr>
+<tr><td><code>ranks.yml</code></td><td>Each rank's look, perks, store price and reward commands</td></tr>
+<tr><td><code>messages.yml</code></td><td>Every message, so you can reword or translate the plugin</td></tr>
+<tr><td><code>menus.yml</code></td><td>Every menu: rows, slots, items, names and lore</td></tr>
+<tr><td><code>cosmetics.yml</code></td><td>Name colours, chat colours and tags</td></tr>
+</tbody></table></div>
+<p>Missing settings are added to your files on startup with their comments. Nothing you changed is overwritten. A file with a mistake in it is copied to <code>&lt;name&gt;.broken</code> and Mantle tells you in the console, instead of loading example data.</p>
+<h2>Colours</h2>
+<p>Every text field takes MiniMessage (<code>&lt;red&gt;</code>, <code>&lt;#ff5555&gt;</code>, <code>&lt;gradient:#ffaa00:#ff5555&gt;</code>) or legacy codes (<code>&amp;c</code>, <code>&amp;l</code>, <code>&amp;#ff5555</code>). <code>&lt;primary&gt;</code>, <code>&lt;accent&gt;</code> and <code>&lt;line&gt;</code> use the theme in config.yml.</p>
+<h2>Theme</h2>
+<pre><code>theme:
+  primary: "#8e44ad"
+  accent: "#d070ff"
+  tag: "Ranks"
+  line: ""            # your own divider, or "" for the built-in one
+  progress-bar:
+    length: 10
+    filled: "&lt;accent&gt;■"
+    empty: "&lt;dark_gray&gt;■"</code></pre>
+</section>
+
+<section class="pg" id="p-license" data-t="License" data-g="Help" data-k="license key lukittu firewall offline grace hwid">
+<h1>License</h1>
+<p>Your BuiltByBit download already contains your license key, so Mantle works straight away. You can also set it yourself in <code>license.key</code> in config.yml.</p>
+<ul>
+<li>Mantle checks the key with Lukittu when the server starts and every 15 minutes after that.</li>
+<li>It sends only the license key, the Mantle product ID and a random ID for that server folder.</li>
+<li>If Lukittu can't be reached, Mantle keeps running for up to 24 hours after its last good check. After that it stops until the server can reach <code>app.lukittu.com</code> again, so allow it in your firewall.</li>
+<li>Each license works on up to 2 servers.</li>
+<li>A key that's been turned off, for example after a leak or a refund, stops Mantle with a message in the console.</li>
+</ul>
+<p>Moved hosts and hit the limit? Message Deputy Dev with your BuiltByBit username.</p>
+</section>
+
+<section class="pg" id="p-help" data-t="Problems and support" data-g="Help" data-k="faq help support troubleshooting">
+<h1>Problems and support</h1>
+<h3>Prefixes don't show in TAB or my scoreboard</h3>
+<p>Run <code>/mantle setup apply</code> to copy ranks.yml prefixes into LuckPerms, or use Mantle's <a href="#placeholders">placeholders</a>.</p>
+<h3>Chat looks doubled or another plugin's format wins</h3>
+<p>Two plugins are formatting chat. Turn off <code>chat.enabled</code> in Mantle or turn off the other plugin's chat format.</p>
+<h3>Nametags or tab order flicker</h3>
+<p>Another plugin is setting its own scoreboard. Turn off <code>nametags.enabled</code> and <code>tab.sort-by-weight</code>.</p>
+<h3>Store reward items didn't arrive</h3>
+<p>Reward commands run straight away, so item commands only work if the player is online. Use a store command set to wait for the player for items.</p>
+<h3>My ranks disappeared after editing ranks.yml</h3>
+<p>The file has a mistake, usually indentation or a missing quote. Mantle saved a copy as <code>ranks.yml.broken</code> and printed the line in the console. Fix it and run <code>/mantle reload</code>.</p>
+<h3>Mantle stopped with a license message</h3>
+<p>See <a href="#license">License</a>. Most often the server can't reach <code>app.lukittu.com</code>.</p>
+<h2>Get help</h2>
+<p>Join the Deputy Services Discord (link on the BuiltByBit page) and open a ticket. Please include your Mantle version, server version and any console errors.</p>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer>Mantle 3.1.0 · made by Deputy Dev</footer>
+</main>
+</div>
+<script>
+{
+const cmds=[
+['/ranks','mantle.menu (everyone)','Rank menu: perks, owned ranks, time left, store links'],
+['/ranktrial','mantle.trial (everyone)','Start the one free rank trial'],
+['/grant <player>','mantle.grant','Grant menu: rank, length, reason, confirm'],
+['/grant <player> <rank> <time> [reason]','mantle.grant','Same thing typed out, works from console'],
+['/grants <player>','mantle.grants','Grant history; click an active grant to remove it (mantle.grant.remove)'],
+['/mantle give <player> <rank> [time] [flags]','mantle.admin','The store command'],
+['/mantle upgrade <player> <from> <to> [time]','mantle.admin','Swap a rank and keep the time left'],
+['/mantle take <player> <rank>','mantle.admin','Remove a rank'],
+['/mantle info [player]','mantle.info','A player\'s ranks and time left'],
+['/mantle list','mantle.admin','Configured ranks and whether LuckPerms has them'],
+['/mantle voucher <rank> <time> [amount] [player]','mantle.admin','Redeemable rank vouchers'],
+['/mantle sale <percent> <time> | stop','mantle.admin','Store-wide sale with a boss bar'],
+['/mantle setup [apply | import]','mantle.admin','Check the install, create missing groups, or import LuckPerms groups'],
+['/mantle reload','mantle.admin','Reload every file'],
+['/rankup, /prestige','mantle.rankup, mantle.prestige','Only when the rank-up module is on'],
+['/color, /chatcolor, /tags','mantle.cosmetics','Pick a name colour, chat colour or tag']];
+const perms=[
+['mantle.*','Every Mantle permission'],
+['mantle.admin','Give and take ranks, vouchers, sales, setup and reload'],
+['mantle.grant','Use /grant (which ranks needs mantle.grant.any or mantle.grant.rank.<rank>)'],
+['mantle.grant.any','Grant any rank'],
+['mantle.grant.rank.<rank>','Grant one rank, for example mantle.grant.rank.vip'],
+['mantle.grant.permission','Grant single permissions (perm:node) with /grant'],
+['mantle.grants','See a player\'s grant history'],
+['mantle.grant.remove','Remove active grants from /grants'],
+['mantle.info','See another player\'s ranks'],
+['mantle.use','Basic player features (menu, trial, rank-up, prestige, vouchers, cosmetics)'],
+['mantle.menu','Open /ranks'],
+['mantle.trial','Use /ranktrial'],
+['mantle.rankup','Use /rankup'],
+['mantle.prestige','Use /prestige'],
+['mantle.voucher.redeem','Redeem rank vouchers'],
+['mantle.cosmetics','Open /color, /chatcolor and /tags'],
+['mantle.cosmetics.all','Unlock every name colour, chat colour and tag'],
+['mantle.namecolor.<id>, mantle.chatcolor.<id>, mantle.tag.<id>','Unlock one cosmetic'],
+['mantle.join.silent','No join or quit message for this player']];
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+document.getElementById('cmds').innerHTML=cmds.map(r=>`<tr><td data-l="Command"><code>${esc(r[0])}</code></td><td data-l="Permission"><code>${esc(r[1])}</code></td><td data-l="What it does">${esc(r[2])}</td></tr>`).join('');
+document.getElementById('perms').innerHTML=perms.map(r=>`<tr><td data-l="Permission"><code>${esc(r[0])}</code></td><td data-l="What it allows">${esc(r[1])}</td></tr>`).join('');
+for(const t of document.querySelectorAll('table.stack')){const h=[...t.querySelectorAll('thead th')].map(x=>x.textContent);for(const tr of t.querySelectorAll('tbody tr'))[...tr.cells].forEach((c,i)=>{if(!c.dataset.l)c.dataset.l=h[i]||''})}
+const pages=[...document.querySelectorAll('section.pg')];
+const ids=pages.map(p=>p.id.slice(2));
+const links=document.getElementById('links');
+let last='';
+links.innerHTML=pages.map(p=>{const g=p.dataset.g;const head=g!==last?`<div class="grp">${esc(g)}</div>`:'';last=g;return head+`<a href="#${p.id.slice(2)}" data-id="${p.id.slice(2)}">${esc(p.dataset.t)}</a>`}).join('');
+const pager=document.getElementById('pager');
+const show=()=>{let id=location.hash.slice(1);if(!ids.includes(id))id='home';pages.forEach(p=>p.classList.toggle('on',p.id==='p-'+id));links.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.dataset.id===id));const i=ids.indexOf(id);const prev=i>0?`<a href="#${ids[i-1]}">← ${esc(pages[i-1].dataset.t)}</a>`:'<span></span>';const next=i<ids.length-1?`<a href="#${ids[i+1]}">${esc(pages[i+1].dataset.t)} →</a>`:'';pager.innerHTML=prev+next;document.body.classList.remove('open');document.getElementById('menu').setAttribute('aria-expanded','false');window.scrollTo(0,0)};
+window.addEventListener('hashchange',show);show();
+const q=document.getElementById('q');const none=document.getElementById('none');
+q.addEventListener('input',()=>{const v=q.value.trim().toLowerCase();let n=0;links.querySelectorAll('a').forEach(a=>{const p=document.getElementById('p-'+a.dataset.id);const hit=!v||(p.dataset.t+' '+(p.dataset.k||'')+' '+p.textContent).toLowerCase().includes(v);a.style.display=hit?'':'none';if(hit)n++});links.querySelectorAll('.grp').forEach(g=>{let s=g.nextElementSibling,vis=false;while(s&&!s.classList.contains('grp')){if(s.style.display!=='none')vis=true;s=s.nextElementSibling}g.style.display=vis?'':'none'});none.style.display=n?'none':'block'});
+q.addEventListener('keydown',e=>{if(e.key==='Enter'){const a=[...links.querySelectorAll('a')].find(a=>a.style.display!=='none');if(a)location.hash=a.dataset.id}});
+const menu=document.getElementById('menu');
+menu.addEventListener('click',()=>{const o=document.body.classList.toggle('open');menu.setAttribute('aria-expanded',String(o))});
+for(const pre of document.querySelectorAll('pre')){const b=document.createElement('button');b.className='cp';b.type='button';b.textContent='Copy';b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(pre.querySelector('code').textContent);b.textContent='Copied'}catch(e){b.textContent='Select and copy'}setTimeout(()=>b.textContent='Copy',1500)});pre.appendChild(b)}
+}
+</script>
+</body>
+</html>
